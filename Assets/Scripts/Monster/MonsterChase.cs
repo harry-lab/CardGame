@@ -9,7 +9,7 @@ public class MonsterChase : MonoBehaviour
     private Transform player;
     private Rigidbody2D rb;
 
-    private bool hasDetectedPlayer = false; //  한 번 인식했는지 저장
+    private bool hasDetectedPlayer = false;
 
     private void Awake()
     {
@@ -21,7 +21,6 @@ public class MonsterChase : MonoBehaviour
     {
         if (player == null) return;
 
-        //  아직 못 봤으면 거리 체크
         if (!hasDetectedPlayer)
         {
             float distance = Vector2.Distance(transform.position, player.position);
@@ -31,11 +30,18 @@ public class MonsterChase : MonoBehaviour
             }
         }
 
-        //  한 번 인식했으면 무조건 따라감
         if (hasDetectedPlayer)
         {
             Vector2 dir = (player.position - transform.position).normalized;
             rb.linearVelocity = dir * moveSpeed;
+
+            // 🔧 캐릭터 방향 전환 처리 (왼쪽/오른쪽)
+            if (dir.x != 0)
+            {
+                Vector3 scale = transform.localScale;
+                scale.x = Mathf.Sign(dir.x) * Mathf.Abs(scale.x); // 방향에 따라 뒤집음
+                transform.localScale = scale;
+            }
         }
     }
 
